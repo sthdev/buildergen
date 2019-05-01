@@ -1,4 +1,4 @@
-<%@ jet package="com.github.sthdev.buildergen.templates.jet" class="ClassBuilderJetTemplate" 
-imports="org.eclipse.emf.codegen.ecore.genmodel.* com.github.sthdev.buildergen.templates.ClassBuilderTemplate"%>
+<%@ jet package="io.github.sthdev.buildergen.templates.jet" class="ClassBuilderJetTemplate" 
+imports="org.eclipse.emf.codegen.ecore.genmodel.* io.github.sthdev.buildergen.templates.ClassBuilderTemplate"%>
 <%// Redirect to the Xtend template class for the actual code generation.%>
 <%=ClassBuilderTemplate.generate((GenClass) argument)%>

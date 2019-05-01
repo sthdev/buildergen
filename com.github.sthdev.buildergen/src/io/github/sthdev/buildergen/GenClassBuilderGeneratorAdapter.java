@@ -1,4 +1,4 @@
-package com.github.sthdev.buildergen;
+package io.github.sthdev.buildergen;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
@@ -11,7 +11,7 @@ public class GenClassBuilderGeneratorAdapter extends GenBaseGeneratorAdapter {
 
 	private static final JETEmitterDescriptor[] JET_EMITTER_DESCRIPTORS = new JETEmitterDescriptor[] {
 			new JETEmitterDescriptor("ClassBuilderTemplate.javajet",
-					"com.github.sthdev.buildergen.templates.jet.ClassBuilderJetTemplate") };
+					"io.github.sthdev.buildergen.templates.jet.ClassBuilderJetTemplate") };
 
 	public GenClassBuilderGeneratorAdapter(BuilderGeneratorAdapterFactory generatorAdapterFactory) {
 		super(generatorAdapterFactory);

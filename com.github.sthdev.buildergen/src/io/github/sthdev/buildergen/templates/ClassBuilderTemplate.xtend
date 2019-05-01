@@ -1,7 +1,7 @@
-package com.github.sthdev.buildergen.templates
+package io.github.sthdev.buildergen.templates
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
-import com.github.sthdev.buildergen.GenClassBuilderTemplateUtil
+import io.github.sthdev.buildergen.GenClassBuilderTemplateUtil
 
 /**
  * Performs the generation of the actual builder class. The JET template redirects to this
