@@ -1,4 +1,4 @@
-package com.github.sthdev.buildergen;
+package io.github.sthdev.buildergen;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;

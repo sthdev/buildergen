@@ -1,7 +1,7 @@
-package com.github.sthdev.buildergen.templates.jet;
+package io.github.sthdev.buildergen.templates.jet;
 
 import org.eclipse.emf.codegen.ecore.genmodel.*;
-import com.github.sthdev.buildergen.templates.ClassBuilderTemplate;
+import io.github.sthdev.buildergen.templates.ClassBuilderTemplate;
 
 public class ClassBuilderJetTemplate
 {
