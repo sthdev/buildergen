@@ -11,7 +11,7 @@ public class GenClassBuilderGeneratorAdapter extends GenBaseGeneratorAdapter {
 
 	private static final JETEmitterDescriptor[] JET_EMITTER_DESCRIPTORS = new JETEmitterDescriptor[] {
 			new JETEmitterDescriptor("ClassBuilderTemplate.javajet",
-					"com.github.sthdev.buildergen.templates.ClassBuilderTemplate") };
+					"com.github.sthdev.buildergen.templates.jet.ClassBuilderJetTemplate") };
 
 	public GenClassBuilderGeneratorAdapter(BuilderGeneratorAdapterFactory generatorAdapterFactory) {
 		super(generatorAdapterFactory);
