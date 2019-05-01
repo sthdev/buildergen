@@ -12,4 +12,5 @@ Require-Bundle: org.eclipse.emf.codegen.ecore,
  org.eclipse.xtend.lib,
  org.eclipse.xtend.lib.macro
 Export-Package: io.github.sthdev.buildergen,
- io.github.sthdev.buildergen.templates
+ io.github.sthdev.buildergen.templates,
+ io.github.sthdev.buildergen.templates.jet
