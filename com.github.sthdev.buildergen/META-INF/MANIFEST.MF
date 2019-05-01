@@ -7,3 +7,5 @@ Bundle-Vendor: sthdev
 Automatic-Module-Name: com.github.sthdev.buildergen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.emf.codegen.ecore
+Export-Package: com.github.sthdev.buildergen,
+ com.github.sthdev.buildergen.templates

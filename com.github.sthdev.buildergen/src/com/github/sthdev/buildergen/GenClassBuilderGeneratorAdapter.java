@@ -2,12 +2,16 @@ package com.github.sthdev.buildergen;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
-import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.codegen.ecore.genmodel.generator.GenBaseGeneratorAdapter;
+import org.eclipse.emf.codegen.jet.JETEmitter;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.Monitor;
 
 public class GenClassBuilderGeneratorAdapter extends GenBaseGeneratorAdapter {
+
+	private static final JETEmitterDescriptor[] JET_EMITTER_DESCRIPTORS = new JETEmitterDescriptor[] {
+			new JETEmitterDescriptor("ClassBuilderTemplate.javajet",
+					"com.github.sthdev.buildergen.templates.ClassBuilderTemplate") };
 
 	public GenClassBuilderGeneratorAdapter(BuilderGeneratorAdapterFactory generatorAdapterFactory) {
 		super(generatorAdapterFactory);
@@ -45,20 +49,22 @@ public class GenClassBuilderGeneratorAdapter extends GenBaseGeneratorAdapter {
 		ensureProjectExists(genModel.getModelDirectory(), genClass, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE,
 				genModel.isUpdateClasspath(), createMonitor(monitor, 1));
 
-		generateJava(genModel.getModelDirectory(), getBuilderPackageName(genClass.getGenPackage()),
-				getBuilderInterfaceName(genClass), getJETEmitter(getJETEmitterDescriptors(), VALIDATOR_ID), null,
+		generateJava(genModel.getModelDirectory(),
+				GenClassBuilderTemplateUtil.getBuilderPackageName(genClass.getGenPackage()),
+				GenClassBuilderTemplateUtil.getBuilderClassName(genClass), getClassBuilderTemplateJETEmitter(), null,
 				createMonitor(monitor, 1));
+
+//		for (GenFeature genFeature : genClass.getAllGenFeatures()) {
+//			genFeature.capName(name)
+//		}
+
+//		genClass.getGenPackage().getImportedFactoryInterfaceName()
 
 		return Diagnostic.OK_INSTANCE;
 	}
 
-	private String getBuilderPackageName(GenPackage genPackage) {
-		String basePackage = genPackage.getInterfacePackageName();
-		return basePackage.length() > 0 ? basePackage + ".builders" : "builders";
-	}
-
-	private String getBuilderInterfaceName(GenClass genClass) {
-		return genClass.getName() + "Builder";
+	private JETEmitter getClassBuilderTemplateJETEmitter() {
+		return getJETEmitter(JET_EMITTER_DESCRIPTORS, 0);
 	}
 
 }

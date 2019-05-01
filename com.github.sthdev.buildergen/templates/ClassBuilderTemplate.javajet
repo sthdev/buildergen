@@ -1,0 +1,42 @@
+<%@ jet package="com.github.sthdev.buildergen.templates.jet" class="ClassBuilderJetTemplate" 
+imports="org.eclipse.emf.codegen.ecore.genmodel.* com.github.sthdev.buildergen.GenClassBuilderTemplateUtil"%>
+<%
+	GenClass genClass = (GenClass) argument;
+	GenPackage genPackage = genClass.getGenPackage();
+	GenModel genModel = genClass.getGenModel();
+	String builderPackageName = GenClassBuilderTemplateUtil.getBuilderPackageName(genPackage);
+	String builderClassName = GenClassBuilderTemplateUtil.getBuilderClassName(genClass);
+%>
+package <%=builderPackageName%>;
+
+<%genModel.markImportLocation(stringBuffer);%>
+
+/**
+ * Builder for {@link <%=genClass.getImportedInterfaceName()%>}.
+ *
+ * @generated
+ */
+public class <%=builderClassName%> {
+
+	/**
+	 * Creates a new builder for {@link <%=genClass.getName()%>}.
+	 *
+	 * @generated
+	 */
+	public <%=builderClassName%>() {
+		// Does nothing by default.
+	}
+		
+	/**
+	 * Builds a new instance of {@link <%=genClass.getName()%>}. The builder can be reused
+	 * multiple times to create additional instances with the same feature values.
+	 *
+	 * @generated
+	 */
+	public <%=genClass.getName()%> build() {
+		<%=genClass.getName()%> object = <%=genPackage.getImportedFactoryInterfaceName()%>.eINSTANCE.create<%=genClass.getName()%>();
+		
+		return object;
+	}
+}
+<%genModel.emitSortedImports();%>
