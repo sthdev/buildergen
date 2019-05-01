@@ -1,8 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF Builder Pattern Generator Extension
-Bundle-SymbolicName: com.github.sthdev.buildergen
+Bundle-SymbolicName: com.github.sthdev.buildergen;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: sthdev
 Automatic-Module-Name: com.github.sthdev.buildergen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.emf.codegen.ecore,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro
+Export-Package: com.github.sthdev.buildergen,
+ com.github.sthdev.buildergen.templates
