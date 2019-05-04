@@ -21,7 +21,7 @@ public class GenClassBuilderGeneratorAdapter extends GenBaseGeneratorAdapter {
 	public boolean canGenerateModel(Object object) {
 		GenClass genClass = (GenClass) object;
 
-		return !genClass.isAbstract();
+		return !genClass.isAbstract() && genClass.getEcoreClass().getInstanceClass() == null;
 	}
 
 	@Override
