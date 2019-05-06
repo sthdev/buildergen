@@ -73,9 +73,7 @@ class ClassBuilderTemplate {
 					return object;
 				}
 				
-				«FOR genFeature : genClass.allGenFeatures.filter[!isDerived && isChangeable]»
-					«generateFeatureSetter(genFeature, builderClassName)»
-				«ENDFOR»
+				«generateFeatureSetters(genClass)»
 			}
 		'''
 
@@ -92,11 +90,33 @@ class ClassBuilderTemplate {
 		'''
 	}
 
-	def static generateFeatureSetter(GenFeature genFeature, String builderClassName) {
+	def static String generateFeatureSetters(GenClass genClass) {
+		val features = genClass.allGenFeatures.filter[!isDerived && isChangeable]
 		return '''
-		public «builderClassName» with«genFeature.capName»() {
+		«FOR genFeature : features.filter[!listType]»
+			«generateSingleValuedFeatureSetter(genFeature, GenClassBuilderTemplateUtil.getBuilderClassName(genClass))»
+		«ENDFOR»
+		'''
+	}
+
+	def static String generateSingleValuedFeatureSetter(GenFeature genFeature, String builderClassName) {
+		val paramName = genFeature.safeName
+		val featureConstant = genFeature.getQualifiedFeatureAccessor()
+		
+		return '''
+		/**
+		 * Sets the value of the «genFeature.formattedName» feature.
+		 *
+		 * <!-- begin-user-doc -->
+		 * «genFeature.documentation»
+		 * <!-- end-user-doc -->
+		 *
+		 * @generated
+		 */
+		public «builderClassName» with«genFeature.capName»(«genFeature.getListItemType(null)» «paramName») {
+			featureValues.put(«featureConstant», «paramName»);
+			
 			return this;
 		}'''
 	}
-
 }
