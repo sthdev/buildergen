@@ -1,7 +1,10 @@
 package io.github.sthdev.buildergen.templates
 
 import io.github.sthdev.buildergen.GenClassBuilderTemplateUtil
+import java.util.Arrays
+import java.util.Collection
 import java.util.HashMap
+import java.util.LinkedList
 import java.util.List
 import java.util.Map
 import java.util.Map.Entry
@@ -15,6 +18,8 @@ import org.eclipse.emf.ecore.EStructuralFeature
  * etc. can be used with an Xtend code generation template, which is much easier to maintain.
  */
 class ClassBuilderTemplate {
+	
+	val static String FEATURE_VALUES_MAP_NAME = "featureValues";
 
 	static def String generate(GenClass genClass) {
 		val genPackage = genClass.getGenPackage();
@@ -40,38 +45,11 @@ class ClassBuilderTemplate {
 				 * 
 				 * @generated
 				 */
-				private final Map<EStructuralFeature, Object> featureValues = new HashMap<EStructuralFeature, Object>();
+				private final Map<EStructuralFeature, Object> «FEATURE_VALUES_MAP_NAME» = new HashMap<EStructuralFeature, Object>();
 			
-				/**
-				 * Creates a new builder for {@link «genClass.getName()»}.
-				 *
-				 * @generated
-				 */
-				public «builderClassName»() {
-					// Does nothing by default.
-				}
+				«generateConstructor(genClass)»
 			
-				/**
-				 * Builds a new instance of {@link «genClass.getName()»}. The builder can be reused
-				 * multiple times to create additional instances with the same feature values.
-				 *
-				 * @generated
-				 */
-				@SuppressWarnings("unchecked")
-				public «genClass.getName()» build() {
-					«genClass.getName()» object = «genPackage.getImportedFactoryInterfaceName()».eINSTANCE.create«genClass.getName()»();
-					
-					for (Entry<EStructuralFeature, Object> entry : featureValues.entrySet()) {
-						if (!entry.getKey().isMany()) {
-							object.eSet(entry.getKey(), entry);
-						}
-						else {
-							((List<Object>) object.eGet(entry.getKey())).addAll((List<? extends Object>) entry.getValue());	
-						}
-					}
-					
-					return object;
-				}
+				«generateBuildMethod(genClass)»
 				
 				«generateFeatureSetters(genClass)»
 			}
@@ -81,31 +59,97 @@ class ClassBuilderTemplate {
 		genModel.markImportLocation(importStringBuffer)
 		genModel.emitSortedImports();
 
-		return '''
+		var classText = ""
+
+		if (genModel.hasCopyright) {
+			classText += genModel.getCopyright("");
+		}
+
+		classText += '''
 			package «GenClassBuilderTemplateUtil.getBuilderPackageName(genPackage)»;
 			
 			«importStringBuffer»
 			
 			«classBody»
 		'''
+		
+		return classText;
+	}
+	
+	def static String generateConstructor(GenClass genClass) {
+		return '''
+		/**
+		 * Creates a new builder for {@link «genClass.getName()»}.
+		 *
+		 * @generated
+		 */
+		public «GenClassBuilderTemplateUtil.getBuilderClassName(genClass)»() {
+			// Does nothing by default.
+		}
+		'''
+	}
+	
+	def static String generateBuildMethod(GenClass genClass) {
+		return '''
+		/**
+		 * Builds a new instance of {@link «genClass.getName()»}. The builder can be reused
+		 * multiple times to create additional instances with the same feature values.
+		 *
+		 * @generated
+		 */
+		@SuppressWarnings("unchecked")
+		public «genClass.getName()» build() {
+			«genClass.getName()» object = «genClass.genPackage.getImportedFactoryInterfaceName()».eINSTANCE.create«genClass.getName()»();
+			
+			for (Entry<EStructuralFeature, Object> entry : «FEATURE_VALUES_MAP_NAME».entrySet()) {
+				if (!entry.getKey().isMany()) {
+					object.eSet(entry.getKey(), entry.getValue());
+				}
+				else if (entry.getValue() instanceof Map) {
+					((Map<Object, Object>) object.eGet(entry.getKey())).putAll((Map<? extends Object, ? extends Object>) entry.getValue());	
+				}
+				else {
+					((List<Object>) object.eGet(entry.getKey())).addAll((List<? extends Object>) entry.getValue());	
+				}
+			}
+			
+			return object;
+		}
+		'''
 	}
 
 	def static String generateFeatureSetters(GenClass genClass) {
 		val features = genClass.allGenFeatures.filter[!isDerived && isChangeable]
+		val builderClassName = GenClassBuilderTemplateUtil.getBuilderClassName(genClass)
+		
 		return '''
-		«FOR genFeature : features.filter[!listType]»
-			«generateSingleValuedFeatureSetter(genFeature, GenClassBuilderTemplateUtil.getBuilderClassName(genClass))»
+		«FOR genFeature : features»
+			«IF !genFeature.listType»
+				«generateSingleValuedFeatureSetter(genFeature, builderClassName)»
+				
+			«ELSEIF genFeature.mapType»
+				«generateMapTypeFeatureSetter(genFeature, builderClassName)»
+				
+				«generateMapTypeSingleEntryFeatureSetter(genFeature, builderClassName)»
+				
+			«ELSE»
+				«generateMultiValuedFeatureSetter(genFeature, builderClassName)»
+				
+				«generateMultiValuedVarArgsFeatureSetter(genFeature, builderClassName)»
+				
+			«ENDIF»
 		«ENDFOR»
 		'''
 	}
-
+	
+	
 	def static String generateSingleValuedFeatureSetter(GenFeature genFeature, String builderClassName) {
 		val paramName = genFeature.safeName
 		val featureConstant = genFeature.getQualifiedFeatureAccessor()
 		
 		return '''
 		/**
-		 * Sets the value of the «genFeature.formattedName» feature.
+		 * Sets the value of the «genFeature.formattedName» «IF genFeature.isContains»containment «ENDIF»feature.
 		 *
 		 * <!-- begin-user-doc -->
 		 * «genFeature.documentation»
@@ -113,10 +157,147 @@ class ClassBuilderTemplate {
 		 *
 		 * @generated
 		 */
-		public «builderClassName» with«genFeature.capName»(«genFeature.getListItemType(null)» «paramName») {
-			featureValues.put(«featureConstant», «paramName»);
+		public «builderClassName» with«genFeature.capName»(«genFeature.getImportedType(null)» «paramName») {
+			«FEATURE_VALUES_MAP_NAME».put(«featureConstant», «paramName»);
 			
 			return this;
 		}'''
 	}
+	
+	def static String generateMultiValuedFeatureSetter(GenFeature genFeature, String builderClassName) {
+		val paramName = genFeature.safeName
+		val featureConstant = genFeature.getQualifiedFeatureAccessor()
+		val listItemType = genFeature.getListItemType(null)
+		
+		genFeature.genModel.importManager.addImport(LinkedList.name)
+		genFeature.genModel.importManager.addImport(Collection.name)
+		
+		return '''
+		/**
+		 * Adds the specified values to the «genFeature.formattedName» «IF genFeature.isContains»containment «ENDIF»feature.
+		 *
+		 * <!-- begin-user-doc -->
+		 * «genFeature.documentation»
+		 * <!-- end-user-doc -->
+		 *
+		 * @generated
+		 */
+		public «builderClassName» with«genFeature.capName»(Collection<«listItemType»> «paramName») {
+			@SuppressWarnings("unchecked")
+			List<«listItemType»> values = (List<«listItemType»>) «FEATURE_VALUES_MAP_NAME».get(«featureConstant»);
+			
+			if (values == null) {
+				values = new LinkedList<«listItemType»>();
+				«FEATURE_VALUES_MAP_NAME».put(«featureConstant», values);
+			}
+			
+			values.addAll(«paramName»);
+			
+			return this;
+		}'''
+	}
+	
+	def static String generateMultiValuedVarArgsFeatureSetter(GenFeature genFeature, String builderClassName) {
+		val featureConstant = genFeature.getQualifiedFeatureAccessor()
+		val listItemType = genFeature.getListItemType(null)
+		
+		genFeature.genModel.importManager.addImport(LinkedList.name)
+		genFeature.genModel.importManager.addImport(Arrays.name)
+		
+		return '''
+		/**
+		 * Adds the specified values to the «genFeature.formattedName» «IF genFeature.isContains»containment «ENDIF»feature.
+		 *
+		 * <!-- begin-user-doc -->
+		 * «genFeature.documentation»
+		 * <!-- end-user-doc -->
+		 *
+		 * @generated
+		 */
+		public «builderClassName» with«genFeature.capName»(«listItemType» item, «listItemType»... items) {
+			@SuppressWarnings("unchecked")
+			List<«listItemType»> values = (List<«listItemType»>) «FEATURE_VALUES_MAP_NAME».get(«featureConstant»);
+			
+			if (values == null) {
+				values = new LinkedList<«listItemType»>();
+				«FEATURE_VALUES_MAP_NAME».put(«featureConstant», values);
+			}
+			
+			values.add(item);
+			
+			if (items != null) {
+				values.addAll(Arrays.asList(items));
+			}
+			
+			return this;
+		}'''
+	}
+	
+	def static generateMapTypeFeatureSetter(GenFeature genFeature, String builderClassName) {
+		val paramName = genFeature.safeName
+		val featureConstant = genFeature.getQualifiedFeatureAccessor()
+		val keyType = genFeature.getImportedMapKeyType(null)
+		val valueType = genFeature.getImportedMapValueType(null)
+		
+		genFeature.genModel.importManager.addImport(Map.name)
+		genFeature.genModel.importManager.addImport(HashMap.name)
+		
+		return '''
+		/**
+		 * Adds the specified key-value pairs to the «genFeature.formattedName» map feature.
+		 *
+		 * <!-- begin-user-doc -->
+		 * «genFeature.documentation»
+		 * <!-- end-user-doc -->
+		 *
+		 * @generated
+		 */
+		public «builderClassName» with«genFeature.capName»(Map<«keyType», «valueType»> «paramName») {
+			@SuppressWarnings("unchecked")
+			Map<«keyType», «valueType»> values = (Map<«keyType», «valueType»>) «FEATURE_VALUES_MAP_NAME».get(«featureConstant»);
+			
+			if (values == null) {
+				values = new HashMap<«keyType», «valueType»>();
+				«FEATURE_VALUES_MAP_NAME».put(«featureConstant», values);
+			}
+			
+			values.putAll(«paramName»);
+			
+			return this;
+		}'''
+	}
+	
+	def static generateMapTypeSingleEntryFeatureSetter(GenFeature genFeature, String builderClassName) {
+		val featureConstant = genFeature.getQualifiedFeatureAccessor()
+		val keyType = genFeature.getImportedMapKeyType(null)
+		val valueType = genFeature.getImportedMapValueType(null)
+		
+		genFeature.genModel.importManager.addImport(Map.name)
+		genFeature.genModel.importManager.addImport(HashMap.name)
+		
+		return '''
+		/**
+		 * Adds the specified key-value pair to the «genFeature.formattedName» map feature.
+		 *
+		 * <!-- begin-user-doc -->
+		 * «genFeature.documentation»
+		 * <!-- end-user-doc -->
+		 *
+		 * @generated
+		 */
+		public «builderClassName» with«genFeature.capName»(«keyType» key, «valueType» value) {
+			@SuppressWarnings("unchecked")
+			Map<«keyType», «valueType»> values = (Map<«keyType», «valueType»>) «FEATURE_VALUES_MAP_NAME».get(«featureConstant»);
+			
+			if (values == null) {
+				values = new HashMap<«keyType», «valueType»>();
+				«FEATURE_VALUES_MAP_NAME».put(«featureConstant», values);
+			}
+			
+			values.put(key, value);
+			
+			return this;
+		}'''
+	}
+	
 }
