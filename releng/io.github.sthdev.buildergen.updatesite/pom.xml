@@ -1,0 +1,12 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.sthdev.buildergen</groupId>
+		<artifactId>io.github.sthdev.buildergen.releng</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>io.github.sthdev.buildergen.updatesite</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>eclipse-repository</packaging>
+</project>
+

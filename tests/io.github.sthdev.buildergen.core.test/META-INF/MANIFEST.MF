@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test
-Bundle-SymbolicName: io.github.sthdev.buildergen.test
+Bundle-SymbolicName: io.github.sthdev.buildergen.core.test
 Bundle-Version: 1.0.0.qualifier
-Fragment-Host: io.github.sthdev.buildergen;bundle-version="1.0.0"
+Fragment-Host: io.github.sthdev.buildergen.core;bundle-version="1.0.0"
 Automatic-Module-Name: io.github.sthdev.buildergen.test
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit.jupiter.api;bundle-version="5.4.0",
