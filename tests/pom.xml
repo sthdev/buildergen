@@ -14,6 +14,7 @@
 
 	<modules>
 		<module>io.github.sthdev.buildergen.core.tests</module>
+		<module>io.github.sthdev.buildergen.it.pobs</module>
 		<module>io.github.sthdev.buildergen.it.tests</module>
 	</modules>
 </project>

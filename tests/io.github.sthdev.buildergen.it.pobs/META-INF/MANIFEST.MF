@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pobs
+Bundle-SymbolicName: io.github.sthdev.buildergen.it.pobs
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: io.github.sthdev.buildergen.it.pobs
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.swtbot.eclipse.finder;bundle-version="2.8.0"
+Export-Package: io.github.sthdev.buildergen.it.pobs
