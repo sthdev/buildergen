@@ -7,7 +7,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelFactory;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  * Tests {@link GenClassBuilderTemplateUtil}.

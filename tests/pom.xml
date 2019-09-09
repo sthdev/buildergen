@@ -13,7 +13,7 @@
 	</parent>
 
 	<modules>
-		<module>io.github.sthdev.buildergen.core.test</module>
+		<module>io.github.sthdev.buildergen.core.tests</module>
 	</modules>
 </project>
 
