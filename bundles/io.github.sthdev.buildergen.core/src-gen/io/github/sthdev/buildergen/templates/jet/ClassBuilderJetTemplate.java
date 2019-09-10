@@ -21,7 +21,7 @@ public class ClassBuilderJetTemplate
   public String generate(Object argument)
   {
     final StringBuffer stringBuffer = new StringBuffer();
-    // Redirect to the Xtend template class for the actual code generation.
+    // Redirect to the Xtend template class for the actual code generation because there is not much tool support for editing JET templates.
     stringBuffer.append(TEXT_1);
     stringBuffer.append(ClassBuilderTemplate.generate((GenClass) argument));
     stringBuffer.append(TEXT_2);
