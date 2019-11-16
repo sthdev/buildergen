@@ -117,6 +117,6 @@
       label="Master"/>
   <logicalProjectContainer
       xsi:type="setup:Project"
-	  href="https://raw.githubusercontent.com/sthdev/setup/master/projects/other/other.projects.setup#/"/>
+	  href="https://raw.githubusercontent.com/sthdev/setup/master/projects/eclipse.plugins/eclipse.plugins.projects.setup#/"/>
   <description>Sets up a workspace for buildergen</description>
 </setup:Project>
